@@ -1,0 +1,141 @@
+Solución
+By Edwin andres Velez Tanbares Código 1088265471
+
+2. Escriba los 4 principios de diseño de hardware aprendidos en clase.
+
+Primer principio de diseño de hardware.
+“La simplicidad favorece la regularidad”
+Descripción: Las operaciones aritméticas básicas tienen unas instrucciones específicas que permiten realizarlas, etas instrucciones tienen un tamaño de 32 bits y son tríadicas, es decir opera de a tres registros.
+
+Segundo principio de diseño.
+“Pequeño es más rápido”
+Descripción: La arquitectura SPARCV8 almacena los operandos en “registros”, la cantidad de registros es limitada, sin embargo  SPARCV8 es una arquitectura escalable que dependiendo de la implementación permite usar algún número de registros que comprenda los valores de entre 40-520 registros. “Un número muy grande de registros automáticamente incrementa el tiempo del ciclo de reloj, simplemente porque las señales eléctricas requieren de más tiempo cuando necesitan viajar más lejos.”   
+
+Tercer principio de diseño.
+“Hacer el caso común más rápido”
+Descripción: debido a la necesidad que se da de inicializar valores en variables.
+
+Cuarto principio de diseño.
+“Buenos diseños demandan grandes compromisos”
+Descripción: Memoria de registros.
+
+
+
+3. Convertir a instrucciones de bajo nivel.
+
+int x=0; 
+int y =8; 
+int z = 1; 
+
+y=x+3;
+z=z+3;
+x=(x-z)+(3+y);
+
+x->%l0
+y->%l1
+z->%l2
+
+
+add %g0 , 0 , %l0
+add %g0 , 8 , %l1
+add %g0 , 1 , %l2
+add %l0 , 3 , %l1
+add %l2 , 3 , %l2
+sud %l0 , %l2 , %l0
+add %l1 , 3 , %l1
+add %l0 , %l1 , %l0
+
+
+
+4. Usar el ld, y st.
+
+a[4]= a[2]+x;
+
+a->%l1
+x->%l0
+
+ld [%l1+2],%l0
+ld [%l1+4],%l2
+add %l0,%l2,%l0
+
+
+y[0] = y[40]+13;
+
+y->%l1
+
+ld [%l1+40],%l0
+add %l0, 13 ,%l0
+ld [%l1+0],%l2
+add %l2, %l0 , %l2
+
+a->%l0
+y->%l1
+x->%l2
+
+
+
+5. Convertir a lenguaje de maquina.
+a.
+int main(){
+	
+	int i =3; p=2;
+	return i+3;
+}
+
+i->%l0
+p->%l1
+
+add %g0 , 3 , %l0
+add %g0 , 2 , %l1
+add %l0 , 3 , %o1
+
+OP  Rd     OP3   RS1  i  imm
+10 10000 000000 00000 1 0000000000011
+10 10001 000000 00000 1 0000000000010
+10 01000 000000 10000 1 0000000000011
+
+b.
+int main(){
+	int p=3; x=1; z=4;
+	int w=0; 
+	w=(p+40)+(x-z);
+	return 0; 
+}
+
+p->%l0
+x->%l1
+z->%l2
+w->%l3
+
+add %g0, 3 , %l0
+add %g0, 1 , %l1
+add %g0, 4 , %l2
+add %g0, 0 , %l3
+sud %l1, %l2 , %l1
+add %l0, 40 , %l0
+add %l0,  %l1 , %l3
+add %g0, 0 , o1 
+
+OP  RD    OP3     RS1 i      imm
+10 10000 000000 00000 1 0000000000011
+10 10001 000000 00000 1 0000000000001
+10 10010 000000 00000 1 0000000000100
+10 10011 000000 00000 1 0000000000000
+10 10001 000100 10001 0 0000000010010
+10 10000 000000 10000 1 0000000101000
+10 10011 000000 10000 0 0000000010001
+10 01001 000000 00000 1 0000000000000
+
+
+6. Inicializar las siguientes variables negativas usando OR.
+n=-12,
+
+or %g0 , -12 , %l0
+
+a=-11,
+
+or %g0 , -11 , %l1
+
+b=-14.
+
+or %g0 , -14 , %l2
